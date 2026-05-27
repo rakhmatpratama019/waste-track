@@ -11,24 +11,27 @@ type Warga struct {
 	JenisSampah  string
 	BeratSampah  float64
 	TanggalSetor string
+	Minggu       int
 }
 
 var dataWarga [NMAX]Warga
 var jumlahData int
 
+//Tampilan Awal
 func tampilkanHeader() {
 
 	fmt.Println("===================================================")
 	fmt.Println("         WASTE-TRACK MANAGEMENT SYSTEM")
 	fmt.Println("===================================================")
-	fmt.Println("Kelompok:")
-	fmt.Println("1. Rakhmat Pratama")
-	fmt.Println("2. Ahmad Luthfi Habibie")
-	fmt.Println("3. Muhammad Haidar Az Zacky")
+	fmt.Println("Kelompok 10:")
+	fmt.Println("1. Rakhmat Pratama - 109082530037")
+	fmt.Println("2. Ahmad Luthfi Habibie - 109082500190")
+	fmt.Println("3. Muhammad Haidar Az Zacky - 109082530035")
 	fmt.Println("===================================================")
 	fmt.Println()
 }
 
+//Tampilan Menu Sesuai Spesifikasi Program
 func tampilkanMenu() {
 
 	fmt.Println()
@@ -37,38 +40,15 @@ func tampilkanMenu() {
 	fmt.Println("2. Ubah Data Warga")
 	fmt.Println("3. Hapus Data Warga")
 	fmt.Println("4. Tampilkan Data Warga")
-	fmt.Println("5. Tambah Transaksi Sampah")
-	fmt.Println("6. Searching Data")
-	fmt.Println("7. Sorting Data")
-	fmt.Println("8. Statistik Sampah")
-	fmt.Println("9. Keluar")
+	fmt.Println("5. Tambah Transaksi Setoran Sampah")
+	fmt.Println("6. Searching Data Warga")
+	fmt.Println("7. Sorting Data Warga")
+	fmt.Println("8. Statistik Sampah Mingguan")
+	fmt.Println("9. Selesai")
 	fmt.Println("========================================")
 }
 
-func sequentialSearchID(id int) int {
-
-	var i int
-	var found bool
-
-	i = 0
-	found = false
-
-	for i < jumlahData && !found {
-
-		if dataWarga[i].ID == id {
-			found = true
-		} else {
-			i++
-		}
-	}
-
-	if found {
-		return i
-	}
-
-	return -1
-}
-
+//Untuk Menambahkan Data Warga
 func tambahWarga() {
 
 	if jumlahData >= NMAX {
@@ -111,6 +91,7 @@ func tambahWarga() {
 	fmt.Println("✅ Data warga berhasil ditambahkan!")
 }
 
+//Untuk Menampilkan Data Warga
 func tampilkanWarga() {
 
 	if jumlahData == 0 {
@@ -140,12 +121,14 @@ func tampilkanWarga() {
 			fmt.Println("Jenis Sampah    :", dataWarga[i].JenisSampah)
 			fmt.Println("Berat Sampah    :", dataWarga[i].BeratSampah, "KG")
 			fmt.Println("Tanggal Setor   :", dataWarga[i].TanggalSetor)
+			fmt.Println("Minggu Ke-      :", dataWarga[i].Minggu)
 		}
 	}
 
 	fmt.Println("------------------------------------------")
 }
 
+//Untuk Mengubah Data Warga yang sudah diisi
 func ubahWarga() {
 
 	var id int
@@ -170,6 +153,7 @@ func ubahWarga() {
 	fmt.Println("✅ Data warga berhasil diubah!")
 }
 
+//Untuk Menghapus Data Warga
 func hapusWarga() {
 
 	var id int
@@ -199,6 +183,7 @@ func hapusWarga() {
 	fmt.Println("✅ ID berhasil dirapikan ulang!")
 }
 
+//Untuk Menambahkan Transaksi Setoran sampah oleh warga yang sudah ada di data
 func tambahTransaksi() {
 
 	var id int
@@ -280,10 +265,105 @@ func tambahTransaksi() {
 
 	dataWarga[index].TanggalSetor = fmt.Sprintf("%d %s %d", tanggal, bulan, tahun)
 
+	fmt.Print("Masukkan Minggu Ke-    : ")
+	fmt.Scan(&dataWarga[index].Minggu)
+
+	if dataWarga[index].Minggu < 1 || dataWarga[index].Minggu > 4 {
+
+	fmt.Println("⚠️ Minggu hanya 1 - 4!")
+	return
+}
+
 	fmt.Println("✅ Transaksi sampah berhasil ditambahkan!")
 }
 
-func selectionSortNama() {
+//Untuk Mencari Data Warga menggunakan ID dengan Sequential Search
+func sequentialSearchID(id int) int {
+
+	var i int
+	var found bool
+
+	i = 0
+	found = false
+
+	for i < jumlahData && !found {
+
+		if dataWarga[i].ID == id {
+			found = true
+		} else {
+			i++
+		}
+	}
+
+	if found {
+		return i
+	}
+
+	return -1
+}
+
+//Untuk Mencari Data Warga menggunakan Nama dengan Sequential Search
+func sequentialSearchNama(nama string) int {
+
+	var i int
+	var found bool
+
+	i = 0
+	found = false
+
+	for i < jumlahData && !found {
+
+		if dataWarga[i].Nama == nama {
+
+			found = true
+
+		} else {
+
+			i++
+		}
+	}
+
+	if found {
+
+		return i
+	}
+
+	return -1
+}
+
+//Untuk Mencari Data Warga menggunakan ID dengan Binary Search
+func binarySearchID(id int) int {
+
+	selectionSortID()
+
+	var low, high, mid int
+
+	low = 0
+	high = jumlahData - 1
+
+	for low <= high {
+
+		mid = (low + high) / 2
+
+		if dataWarga[mid].ID == id {
+
+			return mid
+
+		} else if id < dataWarga[mid].ID {
+
+			high = mid - 1
+
+		} else {
+
+			low = mid + 1
+		}
+	}
+
+	return -1
+}
+
+//Nyambung keatas yang BinarySearch Pakai ID
+func selectionSortID() {
 
 	var i, j, idxMin int
 	var temp Warga
@@ -294,7 +374,7 @@ func selectionSortNama() {
 
 		for j = i + 1; j < jumlahData; j++ {
 
-			if dataWarga[j].Nama < dataWarga[idxMin].Nama {
+			if dataWarga[j].ID < dataWarga[idxMin].ID {
 
 				idxMin = j
 			}
@@ -306,26 +386,7 @@ func selectionSortNama() {
 	}
 }
 
-func insertionSortBerat() {
-
-	var i, j int
-	var temp Warga
-
-	for i = 1; i < jumlahData; i++ {
-
-		temp = dataWarga[i]
-		j = i - 1
-
-		for j >= 0 && dataWarga[j].BeratSampah < temp.BeratSampah {
-
-			dataWarga[j+1] = dataWarga[j]
-			j--
-		}
-
-		dataWarga[j+1] = temp
-	}
-}
-
+//Untuk Mencari Data Warga menggunakan Nama dengan Binary Search
 func binarySearchNama(nama string) int {
 
 	selectionSortNama()
@@ -356,6 +417,76 @@ func binarySearchNama(nama string) int {
 	return -1
 }
 
+//Nyambung keatas yang BinarySearch Pakai Nama
+func selectionSortNama() {
+
+	var i, j, idxMin int
+	var temp Warga
+
+	for i = 0; i < jumlahData-1; i++ {
+
+		idxMin = i
+
+		for j = i + 1; j < jumlahData; j++ {
+
+			if dataWarga[j].Nama < dataWarga[idxMin].Nama {
+
+				idxMin = j
+			}
+		}
+
+		temp = dataWarga[i]
+		dataWarga[i] = dataWarga[idxMin]
+		dataWarga[idxMin] = temp
+	}
+}
+
+//Untuk Mengurutkan Data Warga menggunakan Berat dengan Selection Sort
+func selectionSortBerat() {
+
+	var i, j, idxMax int
+	var temp Warga
+
+	for i = 0; i < jumlahData-1; i++ {
+
+		idxMax = i
+
+		for j = i + 1; j < jumlahData; j++ {
+
+			if dataWarga[j].BeratSampah > dataWarga[idxMax].BeratSampah {
+
+				idxMax = j
+			}
+		}
+
+		temp = dataWarga[i]
+		dataWarga[i] = dataWarga[idxMax]
+		dataWarga[idxMax] = temp
+	}
+}
+
+//Untuk Mengurutkan Data Warga menggunakan Berat dengan Insertion Sort
+func insertionSortBerat() {
+
+	var i, j int
+	var temp Warga
+
+	for i = 1; i < jumlahData; i++ {
+
+		temp = dataWarga[i]
+		j = i - 1
+
+		for j >= 0 && dataWarga[j].BeratSampah < temp.BeratSampah {
+
+			dataWarga[j+1] = dataWarga[j]
+			j--
+		}
+
+		dataWarga[j+1] = temp
+	}
+}
+
+//Menu Utama Saat kita akan mencari Data Warga Menggunakan Sequential Search dan Binary Search
 func menuSearching() {
 
 	var pilihan int
@@ -363,13 +494,17 @@ func menuSearching() {
 	fmt.Println()
 	fmt.Println("=========== MENU SEARCHING ===========")
 	fmt.Println("1. Sequential Search ID")
-	fmt.Println("2. Binary Search Nama")
+	fmt.Println("2. Sequential Search Nama")
+	fmt.Println("3. Binary Search ID")
+	fmt.Println("4. Binary Search Nama")
 	fmt.Println("======================================")
 
 	fmt.Print("Pilih menu searching : ")
 	fmt.Scan(&pilihan)
 
-	if pilihan == 1 {
+	switch pilihan {
+
+	case 1:
 
 		var id int
 
@@ -388,7 +523,45 @@ func menuSearching() {
 			fmt.Println("Nama :", dataWarga[index].Nama)
 		}
 
-	} else if pilihan == 2 {
+	case 2:
+
+		var nama string
+
+		fmt.Print("Masukkan Nama : ")
+		fmt.Scan(&nama)
+
+		index := sequentialSearchNama(nama)
+
+		if index == -1 {
+
+			fmt.Println("⚠️ Data tidak ditemukan!")
+
+		} else {
+
+			fmt.Println("✅ Data ditemukan!")
+			fmt.Println("Nama :", dataWarga[index].Nama)
+		}
+
+	case 3:
+
+		var id int
+
+		fmt.Print("Masukkan ID : ")
+		fmt.Scan(&id)
+
+		index := binarySearchID(id)
+
+		if index == -1 {
+
+			fmt.Println("⚠️ Data tidak ditemukan!")
+
+		} else {
+
+			fmt.Println("✅ Data ditemukan!")
+			fmt.Println("Nama :", dataWarga[index].Nama)
+		}
+
+	case 4:
 
 		var nama string
 
@@ -407,19 +580,20 @@ func menuSearching() {
 			fmt.Println("Nama :", dataWarga[index].Nama)
 		}
 
-	} else {
+	default:
 
 		fmt.Println("⚠️ Pilihan searching tidak valid!")
 	}
 }
 
+//Menu Utama Saat kita akan mengurutkan Data Warga Menggunakan Selection Sort dan Insertion Sort dengan Jumlah Sampah Terbanyak
 func menuSorting() {
 
 	var pilihan int
 
 	fmt.Println()
 	fmt.Println("============ MENU SORTING ============")
-	fmt.Println("1. Selection Sort Nama")
+	fmt.Println("1. Selection Sort Berat Sampah")
 	fmt.Println("2. Insertion Sort Berat Sampah")
 	fmt.Println("======================================")
 
@@ -430,13 +604,15 @@ func menuSorting() {
 
 	case 1:
 
-		selectionSortNama()
-		fmt.Println("✅ Data berhasil diurutkan berdasarkan nama!")
+		selectionSortBerat()
+
+		fmt.Println("✅ Data berhasil diurutkan menggunakan Selection Sort!")
 
 	case 2:
 
 		insertionSortBerat()
-		fmt.Println("✅ Data berhasil diurutkan berdasarkan berat sampah!")
+
+		fmt.Println("✅ Data berhasil diurutkan menggunakan Insertion Sort!")
 
 	default:
 
@@ -444,16 +620,7 @@ func menuSorting() {
 	}
 }
 
-func hitungTotalRecursive(n int) float64 {
-
-	if n == 0 {
-
-		return 0
-	}
-
-	return dataWarga[n-1].BeratSampah + hitungTotalRecursive(n-1)
-}
-
+//Menu Utama Saat kita akan menampilkan Data Statistik Total Akumulasi Sampah dalam satu Minggu
 func tampilkanStatistik() {
 
 	if jumlahData == 0 {
@@ -462,23 +629,47 @@ func tampilkanStatistik() {
 		return
 	}
 
+	var minggu int
 	var total float64
-
-	total = hitungTotalRecursive(jumlahData)
+	var jumlah int
 
 	fmt.Println()
-	fmt.Println("============ STATISTIK SAMPAH ============")
-	fmt.Println("Jumlah Warga            :", jumlahData)
-	fmt.Println("Total Sampah Terkumpul  :", total, "KG")
+	fmt.Println("========== STATISTIK SAMPAH ==========")
 
-	if jumlahData > 0 {
+	fmt.Print("Masukkan Minggu Ke- (1-4) : ")
+	fmt.Scan(&minggu)
 
-		fmt.Println("Rata-rata Sampah        :", total/float64(jumlahData), "KG")
+	if minggu < 1 || minggu > 4 {
+
+		fmt.Println("⚠️ Minggu hanya 1 - 4!")
+		return
 	}
 
-	fmt.Println("==========================================")
+	for i := 0; i < jumlahData; i++ {
+
+		if dataWarga[i].Minggu == minggu {
+
+			total += dataWarga[i].BeratSampah
+			jumlah++
+		}
+	}
+
+	if jumlah == 0 {
+
+		fmt.Println("⚠️ Tidak ada transaksi pada minggu tersebut!")
+		return
+	}
+
+	fmt.Println()
+	fmt.Println("=========== STATISTIK TOTAL SAMPAH MINGGUAN ===========")
+	fmt.Println("Minggu Ke-             :", minggu)
+	fmt.Println("Jumlah Transaksi       :", jumlah)
+	fmt.Println("Total Sampah           :", total, "KG")
+	fmt.Println("Rata-rata Sampah       :", total/float64(jumlah), "KG")
+	fmt.Println("=======================================")
 }
 
+//Menu Utama untuk keseluruhan Fitur
 func main() {
 
 	tampilkanHeader()
@@ -522,8 +713,8 @@ func main() {
 
 			fmt.Println()
 			fmt.Println("========================================")
-			fmt.Println(" Terima kasih telah menggunakan")
-			fmt.Println("      WASTE-TRACK SYSTEM")
+			fmt.Println("   Terima kasih telah menggunakan  ")
+			fmt.Println(" WASTE-TRACK SYSTEM BY KELOMPOK 10 ")
 			fmt.Println("========================================")
 
 		default:
