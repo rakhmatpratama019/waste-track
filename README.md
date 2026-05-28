@@ -1,7 +1,7 @@
 # ♻️ Waste-Track
 ## Aplikasi Manajemen Pengumpulan Sampah Lingkungan
 
-Waste-Track merupakan aplikasi berbasis terminal menggunakan bahasa Go (Golang) yang dibuat untuk membantu proses pengelolaan dan pencatatan pengumpulan sampah warga pada lingkungan atau bank sampah.
+Waste-Track adalah aplikasi untuk mengelola pencatatan setoran sampah warga secara digital. Data utama yang digunakan adalah data warga, jenis sampah, dan log berat setoran. Pengguna aplikasi adalah pengelola bank sampah atau koordinator kebersihan lingkungan.
 
 Program ini dikembangkan untuk memenuhi Tugas Besar Mata Kuliah Algoritma dan Pemrograman 2 dengan implementasi berbagai konsep algoritma dan struktur data seperti CRUD, Sequential Search, Binary Search, Selection Sort, Insertion Sort, statistik data, validasi input, serta modular programming.
 
